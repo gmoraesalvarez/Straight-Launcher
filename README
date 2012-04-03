@@ -1,5 +1,8 @@
 This is the README file for Straight Launcher
 
+This program was made with Lazarus Free Pascal 0.9.30.2 and requires fpc and LCL to 
+compile.
+
 There has to be a /usr/share/applications folder.
 A .applications folder at home will override it.
 
