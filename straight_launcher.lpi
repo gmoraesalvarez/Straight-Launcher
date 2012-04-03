@@ -110,12 +110,10 @@
       <Unit8>
         <Filename Value="bgracontrols/bgraspeedbutton.pas"/>
         <UnitName Value="BGRASpeedButton"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="93"/>
         <CursorPos X="42" Y="122"/>
         <UsageCount Value="52"/>
-        <Loaded Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="bgrabitmap/bgrabitmap.pas"/>
@@ -340,7 +338,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="bgrabitmap;bgracontrols"/>
+      <OtherUnitFiles Value="bgrabitmap"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       <LCLWidgetType Value="gtk2"/>
     </SearchPaths>
