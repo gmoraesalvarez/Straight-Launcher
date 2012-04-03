@@ -1,0 +1,10 @@
+This is the README file for Straight Launcher
+
+There has to be a /usr/share/applications folder.
+A .applications folder at home will override it.
+
+The first execution will be slow because the program caches the icons in high resolution.
+
+For every change in icon theme the .apps folder at home must be cleaned manually.
+
+That's all for now.
