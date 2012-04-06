@@ -16,8 +16,6 @@ type
     FileListBox1: TFileListBox;
     Panel1: TPanel;
     Panel2: TPanel;
-    Panel3: TPanel;
-    ScrollBar1: TScrollBar;
     SpeedButton1: TSpeedButton;
     Timer1: TTimer;
     procedure FormClick(Sender: TObject);
@@ -63,23 +61,35 @@ type
     function get_icon_file(dirlist:TStringList;theicon_:string):string;
     function get_value(thefile,key,expect:string): string;
     function rsearch(folder,filename:string): string;
+    function draw_scroll(vert:boolean;size,current:int64):boolean;
   end; 
 
 var
   Form1: TForm1;
   home:string;
-  bg:TBGRABitmap;
+  bg,sc:TBGRABitmap;
   backcolor:TBGRAPixel;
-  thewidth,nicons,inity:int64;
+  thewidth,nicons,inity,formery,scrollMax,lapse,downY,offset:int64;
   execs:array[0..511] of string;
   originalpos:array[0..511] of TPoint;
   images:array[0..511] of TBGRABitmap;
-  down:boolean;
+  down,downin:boolean;
 implementation
 
 {$R *.lfm}
 
 { TForm1 }
+
+function TForm1.draw_scroll(vert:boolean;size,current:int64):boolean;
+var
+  posit:int64;
+begin
+  posit := 16+round((current*1) / ((size*1)/(bg.Height-96)));
+  sc.Rectangle(sc.Width-19,0,sc.Width+1,sc.Height,BGRA(100,100,100,255),BGRA(100,100,100,255),dmSetExceptTransparent);
+  sc.RoundRect(sc.Width-15,18,sc.Width-4,sc.Height-18,12,12,BGRA(180,180,180,255),BGRA(150,150,150,255));
+  sc.RoundRect(sc.Width-14,posit+4,sc.Width-5,posit+60,8,8,BGRA(30,30,30,255),BGRA(60,60,60,255));
+end;
+
 function TForm1.get_theme_dirs(thelist:TStringList;thetheme:string):boolean;
 var
   temp,usrshare,alt_theme:string;
@@ -258,7 +268,10 @@ end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
+  if inity > scrollMax then inity := scrollMax;
+  if inity < 0 then inity:=0;
   paint;
+  formery:=inity;
 end;
 
 procedure TForm1.TrackBar1Change(Sender: TObject);
@@ -276,7 +289,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
-  i,x,y,offset:int64;
+  i,x,y:int64;
   dir,theicon,thetheme,themedir,usrshare,thename,alt_theme:string;
   dest,src:TRect;
   //newimage:TBGRASpeedButton;
@@ -286,25 +299,34 @@ var
   labelcolor:TBGRAPixel;
 begin
   //ScrollBox1.Color:=RGBToColor(30,30,30);
-  Panel1.Color:=RGBToColor(40,40,40);
-  Panel2.Color:=RGBToColor(40,40,40);
-  Panel3.Color:=RGBToColor(40,40,40);
-  //Panel4.Color:=RGBToColor(30,30,30);
+  Panel1.Color:=RGBToColor(60,60,60);
+  Panel2.Color:=RGBToColor(60,60,60);
+  //Panel3.Color:=RGBToColor(60,60,60);
+  //Panel4.Color:=RGBToColor(60,60,60);
   labelcolor:=BGRAWhite;
   thewidth:=Screen.Width;
-  offset:=96;
-
+  offset:=0;//round((Screen.Width-thewidth) / 2);
+  down:=false;
+  Color:=RGBToColor(40,40,40);
   backcolor:=BGRA(40,40,40,255);
+  bg:=TBGRABitmap.Create(Screen.Width-24,Screen.Height,backcolor);
+  sc:=TBGRABitmap.Create(20,Screen.Height,backcolor);
 
   if FileExists(ProgramDirectory+'/widget') = true then
   begin
     SpeedButton1.Enabled:=false;
     SpeedButton1.Hide;
     WindowState:=wsNormal;
-    Width:=(112*6)+32;
+    Width:=(112*6)+32+24;
     Height:=(140*4+16);
-    thewidth:=1000;
-    Panel3.Hide;
+    thewidth:=Width;
+    bg.free;
+    bg:=TBGRABitmap.Create(width-24,Height,backcolor);
+    sc.free;
+    sc:=TBGRABitmap.Create(20,Height,backcolor);
+    //Panel3.Hide;
+    //Panel4.Hide;
+    Color:=clWindow;
     BorderStyle:=bsSingle;
     Panel1.Color:=clMenuBar;
     Panel2.Color:=clMenuBar;
@@ -314,7 +336,6 @@ begin
     BorderStyle:=bsSingle;
   end else WindowState:=wsMaximized;
 
-  bg:=TBGRABitmap.Create(width,Height,backcolor);
   tempimg:=TBGRABitmap.Create(80,80);
 
 
@@ -341,7 +362,7 @@ begin
   if get_value('/usr/share/applications/'+FileListBox1.Items.Strings[i],'NoDisplay','')<>'true' then
   begin
 
-    if x>((thewidth-(80+80)) div 112)-1 then
+    if x>((thewidth-24) div 112)-1 then
     begin
       y:=y+1;
       x:=0;
@@ -359,13 +380,13 @@ begin
     images[nicons].TextRect(Rect(0,82,80,140),thename,taCenter,tlTop,labelcolor);
 
     originalpos[nicons].Y:=y*140;
-    originalpos[nicons].X:=(x*112)+24+offset;
+    originalpos[nicons].X:=(x*112)+24;
 
     x:=x+1;
     nicons:=nicons+1;
   end else originalpos[i].X := -1;
   end;
-  ScrollBar1.Max:=(y*140)-(Height-140);
+  scrollMax:=round(( (y*140)-(Height-180) ));
   tempimg.Free;
   dirlist.Free;
 end;
@@ -382,16 +403,37 @@ end;
 
 procedure TForm1.FormMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
+begin
+  down:=True;
+  if x > Width-20 then downin:=true;
+  Timer1.Enabled:=true;
+end;
+
+procedure TForm1.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  if down=false then exit;
+  if downin=false then exit;
+  inity:=round(Y * (scrollMax / (sc.Height-96)) )-32;
+end;
+
+procedure TForm1.FormMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 var
   i:int64;
   app:TProcess;
 begin
-  {down:=true;
-  inity:=Y;}
+  Timer1.Enabled:=false;
+  down:=false;
+  if downin = true then
+  begin
+    downin:=false;
+    exit;
+  end;
   for i:=0 to FileListBox1.Count-1 do
   begin
     if (x > originalpos[i].X) and (x < originalpos[i].x+80)
-      and (y+ScrollBar1.Position > originalpos[i].Y) and (y+ScrollBar1.Position < originalpos[i].Y+80) then
+      and (y+(inity*5) > originalpos[i].Y) and (y+(inity*5) < originalpos[i].Y+80) then
     begin
       app:=TProcess.Create(self);
       app.CommandLine:=execs[i];
@@ -413,29 +455,13 @@ begin
   end;
 end;
 
-procedure TForm1.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
-//var
-  //newpos:integer;
-begin
-  {if down = true then
-  begin
-    newpos:=ScrollBar1.Position+(inity-y);
-    ScrollBar1.Position:=newpos;
-    ScrollBar1Scroll(self,scTrack,newpos);
-  end;}
-end;
-
-procedure TForm1.FormMouseUp(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  {down:=false;}
-end;
-
 procedure TForm1.FormMouseWheel(Sender: TObject; Shift: TShiftState;
   WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
 begin
-  ScrollBar1.Position:=ScrollBar1.Position-(WheelDelta div 2);
+  inity:=inity-(WheelDelta);
+  if inity > scrollMax then inity := scrollMax;
+  if inity < 0 then inity:=0;
+  paint;
 end;
 
 procedure TForm1.FormPaint(Sender: TObject);
@@ -443,14 +469,16 @@ var
   i:int64;
 begin
   bg.Fill(backcolor);
-  for i:=(ScrollBar1.Position div 160) to nicons do
+  for i:=((inity) div 140) to nicons do
   begin
-    if originalpos[i].Y-ScrollBar1.Position<(form1.Height) then
+    if originalpos[i].Y-(inity)<(form1.Height) then
     begin
-      bg.PutImage(originalpos[i].X+12,originalpos[i].Y-ScrollBar1.Position+16,images[i],dmSetExceptTransparent,255);
+      bg.PutImage(originalpos[i].X+12,originalpos[i].Y-(inity)+16,images[i],dmSetExceptTransparent,255);
     end;
   end;
+  draw_scroll(true,scrollMax,inity);
   bg.Draw(Canvas,0,0,true);
+  sc.Draw(Canvas,Form1.Width-20,0,true);
 end;
 
 procedure TForm1.FormWindowStateChange(Sender: TObject);
@@ -522,8 +550,7 @@ end;
 procedure TForm1.ScrollBar1Scroll(Sender: TObject; ScrollCode: TScrollCode;
   var ScrollPos: Integer);
 begin
-  if ScrollPos>ScrollBar1.Max then ScrollPos:=ScrollBar1.Max;
-  if ScrollPos<ScrollBar1.Min then ScrollPos:=ScrollBar1.Min;
+
 end;
 
 procedure TForm1.ScrollBar1StartDrag(Sender: TObject;
