@@ -5,8 +5,9 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Buttons,
-  ExtCtrls, FileCtrl, StdCtrls, ComCtrls, process, BGRABitmap, BGRABitmapTypes, types;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Buttons, ExtCtrls,
+  FileCtrl, StdCtrls, ComCtrls, Menus, process, BGRABitmap, BGRABitmapTypes,
+  types,LCLIntf, LCLType;
 
 type
 
@@ -14,10 +15,13 @@ type
 
   TForm1 = class(TForm)
     FileListBox1: TFileListBox;
+    MenuItem1: TMenuItem;
     Panel1: TPanel;
     Panel2: TPanel;
+    PopupMenu1: TPopupMenu;
     SpeedButton1: TSpeedButton;
     Timer1: TTimer;
+    TrayIcon1: TTrayIcon;
     procedure FormClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -34,6 +38,7 @@ type
     procedure FormWindowStateChange(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure Image1Paint(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure Panel2MouseEnter(Sender: TObject);
     procedure ScrollBar1Change(Sender: TObject);
@@ -52,6 +57,9 @@ type
     procedure SpeedButton3Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure TrackBar1Change(Sender: TObject);
+    procedure TrayIcon1Click(Sender: TObject);
+    procedure TrayIcon1MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { private declarations }
   public
@@ -85,7 +93,7 @@ var
   posit:int64;
 begin
   posit := 16+round((current*1) / ((size*1)/(bg.Height-96)));
-  sc.Rectangle(sc.Width-19,0,sc.Width+1,sc.Height,BGRA(100,100,100,255),BGRA(100,100,100,255),dmSetExceptTransparent);
+  sc.Rectangle(sc.Width-20,0,sc.Width+1,sc.Height,BGRA(0,0,0,255),BGRA(0,0,0,255),dmSetExceptTransparent);
   sc.RoundRect(sc.Width-15,18,sc.Width-4,sc.Height-18,12,12,BGRA(180,180,180,255),BGRA(150,150,150,255));
   sc.RoundRect(sc.Width-14,posit+4,sc.Width-5,posit+60,8,8,BGRA(30,30,30,255),BGRA(60,60,60,255));
 end;
@@ -278,6 +286,25 @@ procedure TForm1.TrackBar1Change(Sender: TObject);
 begin
 end;
 
+procedure TForm1.TrayIcon1Click(Sender: TObject);
+begin
+  if Visible = true then
+  begin
+    hide;
+    Timer1.Enabled:=false;
+  end else
+  begin
+    show;
+    Timer1.Enabled:=true;
+  end;
+end;
+
+procedure TForm1.TrayIcon1MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+
+end;
+
 procedure TForm1.FormClick(Sender: TObject);
 begin
 end;
@@ -292,28 +319,36 @@ var
   i,x,y:int64;
   dir,theicon,thetheme,themedir,usrshare,thename,alt_theme:string;
   dest,src:TRect;
-  //newimage:TBGRASpeedButton;
+  //ScreenDC:HDC;
+  //bgimg:TBitmap;
   tempimg:TBGRABitmap;
   newlabel:TLabel;
   dirlist:TStringList;
   labelcolor:TBGRAPixel;
 begin
   //ScrollBox1.Color:=RGBToColor(30,30,30);
-  Panel1.Color:=RGBToColor(60,60,60);
-  Panel2.Color:=RGBToColor(60,60,60);
+  Panel1.Color:=RGBToColor(0,0,0);
+  Panel2.Color:=RGBToColor(0,0,0);
   //Panel3.Color:=RGBToColor(60,60,60);
   //Panel4.Color:=RGBToColor(60,60,60);
   labelcolor:=BGRAWhite;
   thewidth:=Screen.Width;
   offset:=0;//round((Screen.Width-thewidth) / 2);
   down:=false;
-  Color:=RGBToColor(40,40,40);
-  backcolor:=BGRA(40,40,40,255);
-  bg:=TBGRABitmap.Create(Screen.Width-24,Screen.Height,backcolor);
+  Color:=RGBToColor(0,0,0);
+  backcolor:=BGRA(0,0,0,255);
+  bg:=TBGRABitmap.Create(Screen.Width-19,Screen.Height,backcolor);
   sc:=TBGRABitmap.Create(20,Screen.Height,backcolor);
 
   if FileExists(ProgramDirectory+'/widget') = true then
   begin
+    //ScreenDC:=GetDC(0);
+    //bgimg:=TBitmap.Create;
+    //bgimg.LoadFromDevice(ScreenDC);
+    //bgimg.SaveToFile(ProgramDirectory+'/bgfile.bmp');
+    //bgimg.Free;
+    //ReleaseDC(0,ScreenDC);
+
     SpeedButton1.Enabled:=false;
     SpeedButton1.Hide;
     WindowState:=wsNormal;
@@ -321,19 +356,19 @@ begin
     Height:=(140*4+16);
     thewidth:=Width;
     bg.free;
-    bg:=TBGRABitmap.Create(width-24,Height,backcolor);
+    bg:=TBGRABitmap.Create(width-20,Height,backcolor);
+    //bg:=TBGRABitmap.Create(ProgramDirectory+'/bgfile.bmp');
     sc.free;
     sc:=TBGRABitmap.Create(20,Height,backcolor);
     //Panel3.Hide;
     //Panel4.Hide;
     Color:=clWindow;
-    BorderStyle:=bsSingle;
-    Panel1.Color:=clMenuBar;
-    Panel2.Color:=clMenuBar;
+    //BorderStyle:=bsToolWindow;
+    Panel1.Color:=clBlack;
+    Panel2.Color:=clBlack;
     offset:=0;
-    backcolor:=BGRA(240,240,240,255);
-    labelcolor:=BGRABlack;
-    BorderStyle:=bsSingle;
+    backcolor:=BGRA(0,0,0,255);
+    labelcolor:=BGRAWhite;
   end else WindowState:=wsMaximized;
 
   tempimg:=TBGRABitmap.Create(80,80);
@@ -414,7 +449,7 @@ procedure TForm1.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
 begin
   if down=false then exit;
   if downin=false then exit;
-  inity:=round(Y * (scrollMax / (sc.Height-96)) )-32;
+  inity:=round(Y * (scrollMax / (sc.Height-96)) )-140;
 end;
 
 procedure TForm1.FormMouseUp(Sender: TObject; Button: TMouseButton;
@@ -433,7 +468,7 @@ begin
   for i:=0 to FileListBox1.Count-1 do
   begin
     if (x > originalpos[i].X) and (x < originalpos[i].x+80)
-      and (y+(inity*5) > originalpos[i].Y) and (y+(inity*5) < originalpos[i].Y+80) then
+      and (y+(inity*1) > originalpos[i].Y) and (y+(inity*1) < originalpos[i].Y+80) then
     begin
       app:=TProcess.Create(self);
       app.CommandLine:=execs[i];
@@ -441,15 +476,9 @@ begin
       app.Execute;
       app.free;
 
-      if FileExists(ProgramDirectory+'/widget') = false then
-      begin
-        Close;
-      end
-      else
-      begin
-        WindowState:=wsMinimized;
-        Timer1.Enabled:=false;
-      end;
+      Timer1.Enabled:=false;
+      hide;
+
       Break;
     end;
   end;
@@ -483,7 +512,11 @@ end;
 
 procedure TForm1.FormWindowStateChange(Sender: TObject);
 begin
-  if WindowState=wsMinimized then Timer1.Enabled:=false else Timer1.Enabled:=true;
+  {if WindowState=wsMinimized then
+  begin
+    Timer1.Enabled:=false;
+    hide;
+  end else Timer1.Enabled:=true;}
 end;
 
 procedure TForm1.Image1Click(Sender: TObject);
@@ -510,6 +543,11 @@ end;
 procedure TForm1.Image1Paint(Sender: TObject);
 begin
 
+end;
+
+procedure TForm1.MenuItem1Click(Sender: TObject);
+begin
+  close;
 end;
 
 procedure TForm1.PaintBox1Paint(Sender: TObject);
