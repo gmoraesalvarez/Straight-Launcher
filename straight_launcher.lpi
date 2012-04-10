@@ -53,8 +53,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="319"/>
-        <CursorPos X="3" Y="324"/>
+        <TopLine Value="341"/>
+        <CursorPos X="51" Y="363"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -64,7 +64,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="17"/>
         <CursorPos X="40" Y="33"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="23"/>
       </Unit2>
       <Unit3>
         <Filename Value="/usr/lib/lazarus/lcl/stdctrls.pp"/>
@@ -72,7 +72,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="33"/>
         <CursorPos X="12" Y="59"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="12"/>
       </Unit3>
       <Unit4>
         <Filename Value="/usr/lib/lazarus/lcl/graphics.pp"/>
@@ -81,7 +81,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="98"/>
         <CursorPos X="10" Y="135"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
@@ -89,7 +89,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="79"/>
         <CursorPos X="56" Y="95"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit5>
       <Unit6>
         <Filename Value="/usr/lib/fpc/src/packages/fcl-image/src/fpimage.pp"/>
@@ -97,7 +97,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="69" Y="17"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit6>
       <Unit7>
         <Filename Value="/usr/lib/lazarus/lcl/buttons.pp"/>
@@ -105,7 +105,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="304"/>
         <CursorPos X="15" Y="320"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit7>
       <Unit8>
         <Filename Value="bgracontrols/bgraspeedbutton.pas"/>
@@ -113,7 +113,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="93"/>
         <CursorPos X="42" Y="122"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="47"/>
       </Unit8>
       <Unit9>
         <Filename Value="bgrabitmap/bgrabitmap.pas"/>
@@ -121,7 +121,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="59"/>
         <CursorPos X="3" Y="75"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit9>
       <Unit10>
         <Filename Value="bgrabitmap/bgradefaultbitmap.pas"/>
@@ -130,7 +130,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="295"/>
         <CursorPos X="77" Y="311"/>
-        <UsageCount Value="33"/>
+        <UsageCount Value="34"/>
         <Loaded Value="True"/>
       </Unit10>
       <Unit11>
@@ -139,7 +139,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="116"/>
         <CursorPos X="67" Y="574"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit11>
       <Unit12>
         <Filename Value="bgracontrols/bgraimagemanipulation.pas"/>
@@ -147,7 +147,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="61"/>
         <CursorPos X="93" Y="77"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="0"/>
       </Unit12>
       <Unit13>
         <Filename Value="bgrabitmap/bgrabitmaptypes.pas"/>
@@ -156,7 +156,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="2070"/>
         <CursorPos X="21" Y="2075"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="52"/>
         <Loaded Value="True"/>
       </Unit13>
       <Unit14>
@@ -165,7 +165,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="3" Y="38"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit14>
       <Unit15>
         <Filename Value="/usr/lib/lazarus/lcl/interfaces/qt/qtint.pp"/>
@@ -173,7 +173,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit15>
       <Unit16>
         <Filename Value="/usr/lib/fpc/src/packages/cairo/src/cairo.pp"/>
@@ -181,7 +181,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="248"/>
         <CursorPos X="3" Y="280"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit16>
       <Unit17>
         <Filename Value="/usr/lib/lazarus/lcl/fileutil.pas"/>
@@ -189,7 +189,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="155"/>
         <CursorPos X="10" Y="171"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="0"/>
       </Unit17>
       <Unit18>
         <Filename Value="/usr/lib/lazarus/lcl/controls.pp"/>
@@ -197,7 +197,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="3869"/>
         <CursorPos X="15" Y="2011"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit18>
       <Unit19>
         <Filename Value="bgrabitmap/bgragtkbitmap.pas"/>
@@ -205,7 +205,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="34"/>
         <CursorPos X="15" Y="50"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit19>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">

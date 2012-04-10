@@ -319,13 +319,13 @@ var
   i,x,y:int64;
   dir,theicon,thetheme,themedir,usrshare,thename,alt_theme:string;
   dest,src:TRect;
-  //ScreenDC:HDC;
-  //bgimg:TBitmap;
   tempimg:TBGRABitmap;
   newlabel:TLabel;
-  dirlist:TStringList;
+  dirlist,config:TStringList;
   labelcolor:TBGRAPixel;
 begin
+  config:=TStringList.Create;
+  if FileExists(ProgramDirectory+'/config') then config.LoadFromFile(ProgramDirectory+'/config');
   //ScrollBox1.Color:=RGBToColor(30,30,30);
   Panel1.Color:=RGBToColor(0,0,0);
   Panel2.Color:=RGBToColor(0,0,0);
@@ -340,15 +340,8 @@ begin
   bg:=TBGRABitmap.Create(Screen.Width-19,Screen.Height,backcolor);
   sc:=TBGRABitmap.Create(20,Screen.Height,backcolor);
 
-  if FileExists(ProgramDirectory+'/widget') = true then
+  if config.Strings[0]='fullscreen=false' then
   begin
-    //ScreenDC:=GetDC(0);
-    //bgimg:=TBitmap.Create;
-    //bgimg.LoadFromDevice(ScreenDC);
-    //bgimg.SaveToFile(ProgramDirectory+'/bgfile.bmp');
-    //bgimg.Free;
-    //ReleaseDC(0,ScreenDC);
-
     SpeedButton1.Enabled:=false;
     SpeedButton1.Hide;
     WindowState:=wsNormal;
@@ -357,18 +350,24 @@ begin
     thewidth:=Width;
     bg.free;
     bg:=TBGRABitmap.Create(width-20,Height,backcolor);
-    //bg:=TBGRABitmap.Create(ProgramDirectory+'/bgfile.bmp');
     sc.free;
     sc:=TBGRABitmap.Create(20,Height,backcolor);
     //Panel3.Hide;
     //Panel4.Hide;
     Color:=clWindow;
-    //BorderStyle:=bsToolWindow;
+    if config.Strings[1]='border=true' then BorderStyle:=bsToolWindow;
     Panel1.Color:=clBlack;
     Panel2.Color:=clBlack;
-    offset:=0;
     backcolor:=BGRA(0,0,0,255);
     labelcolor:=BGRAWhite;
+    if config.Strings[2]='use_gtk2=true' then
+    begin
+      backcolor:=BGRA(255-Red(clWindow),255-Green(clWindow),255-Blue(clWindow),255);//BGRA(240,240,240,255);
+      labelcolor:=BGRA(255-Red(cltext),255-Green(cltext),255-Blue(cltext),255);//BGRABlack;
+      Panel1.Color:=clMenuBar;
+      Panel2.Color:=clMenuBar;
+    end;
+    offset:=0;
   end else WindowState:=wsMaximized;
 
   tempimg:=TBGRABitmap.Create(80,80);
