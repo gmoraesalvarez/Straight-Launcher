@@ -93,7 +93,7 @@ var
   posit:int64;
 begin
   posit := 16+round((current*1) / ((size*1)/(bg.Height-96)));
-  sc.Rectangle(sc.Width-20,0,sc.Width+1,sc.Height,BGRA(0,0,0,255),BGRA(0,0,0,255),dmSetExceptTransparent);
+  sc.Rectangle(sc.Width-20,0,sc.Width+1,sc.Height,BGRA(20,20,20,255),BGRA(20,20,20,255),dmSetExceptTransparent);
   sc.RoundRect(sc.Width-15,18,sc.Width-4,sc.Height-18,12,12,BGRA(180,180,180,255),BGRA(150,150,150,255));
   sc.RoundRect(sc.Width-14,posit+4,sc.Width-5,posit+60,8,8,BGRA(30,30,30,255),BGRA(60,60,60,255));
 end;
@@ -317,18 +317,18 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   i,x,y:int64;
-  dir,theicon,thetheme,themedir,usrshare,thename,alt_theme:string;
+  dir,theicon,thetheme,themedir,usrshare,thename,alt_theme,desktopfile:string;
   dest,src:TRect;
   tempimg:TBGRABitmap;
-  newlabel:TLabel;
-  dirlist,config:TStringList;
+  dirlist,config,iconlist:TStringList;
   labelcolor:TBGRAPixel;
 begin
   config:=TStringList.Create;
+  iconlist:=TStringList.Create;
   if FileExists(ProgramDirectory+'/config') then config.LoadFromFile(ProgramDirectory+'/config');
   //ScrollBox1.Color:=RGBToColor(30,30,30);
-  Panel1.Color:=RGBToColor(0,0,0);
-  Panel2.Color:=RGBToColor(0,0,0);
+  Panel1.Color:=RGBToColor(20,20,20);
+  Panel2.Color:=RGBToColor(20,20,20);
   //Panel3.Color:=RGBToColor(60,60,60);
   //Panel4.Color:=RGBToColor(60,60,60);
   labelcolor:=BGRAWhite;
@@ -336,7 +336,7 @@ begin
   offset:=0;//round((Screen.Width-thewidth) / 2);
   down:=false;
   Color:=RGBToColor(0,0,0);
-  backcolor:=BGRA(0,0,0,255);
+  backcolor:=BGRA(20,20,20,255);
   bg:=TBGRABitmap.Create(Screen.Width-19,Screen.Height,backcolor);
   sc:=TBGRABitmap.Create(20,Screen.Height,backcolor);
 
@@ -356,10 +356,6 @@ begin
     //Panel4.Hide;
     Color:=clWindow;
     if config.Strings[1]='border=true' then BorderStyle:=bsToolWindow;
-    Panel1.Color:=clBlack;
-    Panel2.Color:=clBlack;
-    backcolor:=BGRA(0,0,0,255);
-    labelcolor:=BGRAWhite;
     if config.Strings[2]='use_gtk2=true' then
     begin
       backcolor:=BGRA(255-Red(clWindow),255-Green(clWindow),255-Blue(clWindow),255);//BGRA(240,240,240,255);
@@ -390,10 +386,18 @@ begin
   dirlist:=TStringList.Create;
   get_theme_dirs(dirlist,thetheme);
 
-  //WriteLn('scrollbox width: '+IntToStr(ScrollBox1.Width));
   for i:=0 to FileListBox1.Items.Count-1 do
   begin
-  if get_value('/usr/share/applications/'+FileListBox1.Items.Strings[i],'NoDisplay','')<>'true' then
+    iconlist.Add(get_value('/usr/share/applications/'+FileListBox1.Items.Strings[i],'Name','')+
+      ' --> '+FileListBox1.Items.Strings[i]);
+  end;
+  iconlist.Sort;
+
+  for i:=0 to iconlist.Count-1 do
+  begin
+  desktopfile:='/usr/share/applications/'+copy(iconlist.Strings[i],pos(' --> ',iconlist.Strings[i])+5,length(iconlist.Strings[i]));
+  thename:=copy(iconlist.Strings[i],1,pos(' --> ',iconlist.Strings[i])-1);
+  if get_value(desktopfile,'NoDisplay','')<>'true' then
   begin
 
     if x>((thewidth-24) div 112)-1 then
@@ -402,9 +406,8 @@ begin
       x:=0;
     end;
 
-    theicon:=get_value('/usr/share/applications/'+FileListBox1.Items.Strings[i],'Icon','');
-    thename:=get_value('/usr/share/applications/'+FileListBox1.Items.Strings[i],'Name','');
-    execs[nicons]:=get_value('/usr/share/applications/'+FileListBox1.Items.Strings[i],'Exec','');
+    theicon:=get_value(desktopfile,'Icon','');
+    execs[nicons]:=get_value(desktopfile,'Exec','');
 
     images[nicons] := TBGRABitmap.Create(80,140,backcolor);
     tempimg.LoadFromFile(get_icon_file(dirlist,theicon));
@@ -423,6 +426,7 @@ begin
   scrollMax:=round(( (y*140)-(Height-180) ));
   tempimg.Free;
   dirlist.Free;
+  iconlist.Free;
 end;
 
 procedure TForm1.FormDeactivate(Sender: TObject);
