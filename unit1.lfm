@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 283
+  Left = 270
   Height = 545
-  Top = 111
+  Top = 110
   Width = 800
   AlphaBlendValue = 90
   BorderStyle = bsNone
@@ -23,7 +23,7 @@ object Form1: TForm1
   OnWindowStateChange = FormWindowStateChange
   Position = poScreenCenter
   ShowInTaskBar = stNever
-  LCLVersion = '0.9.30.4'
+  LCLVersion = '1.0.5.0'
   Visible = True
   object Panel1: TPanel
     Left = 0
@@ -63,10 +63,10 @@ object Form1: TForm1
     end
   end
   object FileListBox1: TFileListBox
-    Left = 8
-    Height = 94
-    Top = 56
-    Width = 88
+    Left = 32
+    Height = 344
+    Top = 80
+    Width = 384
     Directory = '/home/gma'
     ItemHeight = 0
     TabOrder = 2

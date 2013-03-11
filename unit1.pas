@@ -100,42 +100,52 @@ end;
 
 function TForm1.get_theme_dirs(thelist:TStringList;thetheme:string):boolean;
 var
-  temp,usrshare,alt_theme:string;
+  temp,usrshare:string;
+  alt_theme:array[0..7] of string;
+  i:integer;
 begin
   usrshare:='/usr/share';
   thelist.Clear;
+  WriteLn('Checking if '+home+'/.icons/'+thetheme+'/index.theme'+' exists');
   if FileExists(home+'/.icons/'+thetheme+'/index.theme') then
   begin
     thelist.Add(home+'/.icons/'+thetheme);
+    WriteLn('It does.');
   end
   else if FileExists(usrshare+'/icons/'+thetheme+'/index.theme') then
   begin
     thelist.Add(usrshare+'/icons/'+thetheme);
-  end;
+    WriteLn('It does not.');
+  end else WriteLn('Not even '+usrshare+'/icons/'+thetheme+'/index.theme does.');
 
   WriteLn('main themedir: '+thelist.Strings[0]);
 
   temp:=thelist.Strings[0];
-  while temp <> 'finish' do
-  begin
-    alt_theme := get_value(temp+'/index.theme','Inherits','');
-    if pos(',',alt_theme) > 0 then alt_theme:=copy(alt_theme,1,pos(',',alt_theme)-1);
-    //WriteLn(temp+' Inherits: '+alt_theme);
+    alt_theme[0] := get_value(temp+'/index.theme','Inherits','');
+    WriteLn('main theme inherits '+alt_theme[0]);
+    for i:=1 to 7 do
+    begin
+      if pos(',',alt_theme[0]) > 0 then
+      begin
+        alt_theme[i]:=copy(alt_theme[0],1,pos(',',alt_theme[0])-1);
+        alt_theme[0]:=copy(alt_theme[0],pos(',',alt_theme[0])+1,length(alt_theme[0]));
+        if length(alt_theme[0])>0 then alt_theme[i+1]:=alt_theme[0];
+      end;
 
-    if FileExists(home+'/.icons/'+alt_theme+'/index.theme') then
-    begin
-      temp:=home+'/.icons/'+alt_theme;
-      thelist.Add(temp);
-    end
-    else if FileExists(usrshare+'/icons/'+alt_theme+'/index.theme') then
-    begin
-      temp:=usrshare+'/icons/'+alt_theme;
-      thelist.Add(temp);
-    end
-    else temp:='finish' ;
-    WriteLn('found themedir: '+temp);
-  end;
-  //WriteLn('alt_theme: '+alt_theme);
+      if FileExists(home+'/.icons/'+alt_theme[i]+'/index.theme') then
+      begin
+        temp:=home+'/.icons/'+alt_theme[i];
+        thelist.Add(temp);
+      end
+      else if FileExists(usrshare+'/icons/'+alt_theme[i]+'/index.theme') then
+      begin
+        temp:=usrshare+'/icons/'+alt_theme[i];
+        thelist.Add(temp);
+      end
+      else temp:='no '+alt_theme[i]+' found' ;
+      WriteLn('themedir: '+temp);
+    end;
+    WriteLn('themedir: '+temp);
   Result:=true;
 end;
 
@@ -148,7 +158,7 @@ begin                                                                           
   app.Options:=[poWaitOnExit];
   if FileExists(home+'/.apps/'+theicon+'.png')=false then app.Execute;
   Result:=home+'/.apps/'+theicon+'.png';
-  //WriteLn('converted or found '+svgfile);
+  WriteLn('converted or found '+svgfile);
   app.Free;
 end;
 
@@ -159,7 +169,7 @@ var
 begin
   theicon := ExtractFileNameOnly(theicon_);
   theicon := ExtractFileNameWithoutExt(theicon);
-  //debug WriteLn('the icon should be '+theicon);
+   WriteLn('the icon should be '+theicon);
 
   if FileExists(home+'/.apps/'+theicon+'.png') then Result:=home+'/.apps/'+theicon+'.png' else
   if FileExists(theicon_) then Result:=convert_svg(theicon_,theicon) else
@@ -178,19 +188,19 @@ begin
     if aicon='' then
     begin
       aicon:=rsearch('/usr/share/icons/hicolor/',theicon+'.svg');
-      //debug WriteLn('searching for '+theicon+'.svg in /usr/share/icons/hicolor/');
+       WriteLn('searching for '+theicon+'.svg in /usr/share/icons/hicolor/');
     end;
     if aicon='' then
     begin
       aicon:=rsearch('/usr/share/icons/hicolor/',theicon+'.png');
-      //debug WriteLn('searching for '+theicon+'.svg in /usr/share/icons/hicolor/');
+       WriteLn('searching for '+theicon+'.svg in /usr/share/icons/hicolor/');
     end;
-    //WriteLn('search returned '+aicon);
+    WriteLn('search returned '+aicon);
 
     if Pos('.',aicon)>0 then Result:=convert_svg(aicon,theicon) else
     if FileExists('/usr/share/pixmaps/'+theicon+'.png') then Result:=convert_svg('/usr/share/pixmaps/'+theicon+'.png',theicon) else
     if FileExists('/usr/share/pixmaps/'+theicon+'.xpm') then Result:=convert_svg('/usr/share/pixmaps/'+theicon+'.xpm',theicon) else
-    Result:=convert_svg('/usr/share/icons/hicolor/scalable/apps/Terminal.svg',theicon);
+    Result:=convert_svg('xfce-terminal.svg',theicon);
   end;
 
 end;
@@ -323,9 +333,11 @@ var
   dirlist,config,iconlist:TStringList;
   labelcolor:TBGRAPixel;
 begin
+  WriteLn('Welcome to Straight Launcher');
   config:=TStringList.Create;
   iconlist:=TStringList.Create;
   if FileExists(ProgramDirectory+'/config') then config.LoadFromFile(ProgramDirectory+'/config');
+  WriteLn('Config file loaded or created.');
   //ScrollBox1.Color:=RGBToColor(30,30,30);
   Panel1.Color:=RGBToColor(20,20,20);
   Panel2.Color:=RGBToColor(20,20,20);
@@ -340,6 +352,7 @@ begin
   bg:=TBGRABitmap.Create(Screen.Width-19,Screen.Height,backcolor);
   sc:=TBGRABitmap.Create(20,Screen.Height,backcolor);
 
+  WriteLn('Reading Config.');
   if config.Strings[0]='fullscreen=false' then
   begin
     SpeedButton1.Enabled:=false;
@@ -365,6 +378,7 @@ begin
     end;
     offset:=0;
   end else WindowState:=wsMaximized;
+  WriteLn('Window state chosen.');
 
   tempimg:=TBGRABitmap.Create(80,80);
 
@@ -379,19 +393,23 @@ begin
   if DirectoryExists(home+'/.apps')=false then CreateDir(home+'/.apps');
   if DirectoryExists(home+'/.applications') then FileListBox1.Directory:=home+'/.applications'
     else FileListBox1.Directory:='/usr/share/applications';
-  thetheme:=get_value(home+'/.gtkrc-2.0','gtk-icon-theme-name','');
+  FileListBox1.Refresh;
+  thetheme:=get_value('config','theme','');
 
-  //WriteLn('the theme is '+thetheme);
+  WriteLn('The theme is '+thetheme);
 
   dirlist:=TStringList.Create;
   get_theme_dirs(dirlist,thetheme);
 
+  WriteLn('There are '+IntToStr(FileListBox1.Items.Count)+'applications listed.');
   for i:=0 to FileListBox1.Items.Count-1 do
   begin
     iconlist.Add(get_value('/usr/share/applications/'+FileListBox1.Items.Strings[i],'Name','')+
       ' --> '+FileListBox1.Items.Strings[i]);
   end;
   iconlist.Sort;
+
+  WriteLn('List of icons filled.');
 
   for i:=0 to iconlist.Count-1 do
   begin
