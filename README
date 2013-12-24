@@ -10,4 +10,7 @@ The first execution will be slow because the program caches the icons in high re
 
 For every change in icon theme the .apps folder at home must be cleaned manually.
 
-That's all for now.
+That's probably all I'll be doing for this project.
+It has certain bugs, like for example, icons don't exactly match their click boxes vertically.
+All in all it is in usable state, though, and I use it just fine.
+
